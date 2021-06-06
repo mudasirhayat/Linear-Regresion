@@ -1,0 +1,99 @@
+###################################
+# Simple Linear Regression with Gradient Descent
+###################################
+
+setwd("C:\\Users\\MudasirHayat\\Desktop\\University Documents\\SEMESTER6\\DataScience")
+library(ggplot2)
+library(ggpmisc)
+
+############# Function to Read Data Frame #################
+readData <- function(){
+  myD <- read.table(file = "C:\\Users\\MudasirHayat\\Desktop\\University Documents\\SEMESTER6\\DataScience\\LinearReg_GraDes_Data.txt", header = TRUE, col.names = c("X","Y")) 
+  print(head(myD))
+  return(myD)
+}
+
+createScatter <- function(myData){
+  
+  myPlot <- ggplot(myData, aes(x = X, y = Y)) +
+            geom_point() 
+  
+  print(myPlot)
+}
+
+################ Linear Regression ##############################
+#        y = mx + b
+#
+#########################################################
+costF <- function(x, y, m, b){
+  # MSE
+  m <- runif(1, 0, 1) # a random number between 0-1
+  b <- runif(1, 0, 1)
+  
+  n <- length(x) # total data points
+  print(n)
+  
+  yhat <- m * x + b # Predicted
+  MSE  <- sum((y - yhat) ^ 2) / n
+  
+  return(MSE)
+}
+
+
+gradientDesc <- function(x, y, learn_rate, conv_threshold, max_iter) {
+  plot(x, y, col = "blue", pch = 20)
+  
+  m <- runif(1, 0, 1)
+  b <- runif(1, 0, 1)
+  n <- length(x) # total data points
+  yhat <- m * x + b
+  MSE <- sum((y - yhat) ^ 2) / n
+  
+  converged = FALSE
+  iterations = 0
+  while(converged == FALSE) {
+    ## Implement the gradient descent algorithm
+    m_new <- m - learn_rate * ((1 / n) * (sum((-2*x)*(y - yhat))))
+    b_new <- b - learn_rate * ((1 / n) * (sum((-2)  *(y - yhat))))
+    m <- m_new
+    b <- b_new
+    yhat <- m * x + b
+    MSE <- sum((y - yhat) ^ 2) / n
+    if(MSE  < conv_threshold) {
+      abline(b, m) 
+      converged = TRUE
+      print(paste("Optimal intercept:", b, "Optimal slope:", m))
+      
+      ### R-Squared Value
+      rss <- sum( (y - yhat)^2 )
+      tss <- sum( ( y - mean(y) )^2 )
+      print( 1 - (rss / tss ))
+      
+      return()
+    }
+ 
+    iterations = iterations + 1
+    if(iterations > max_iter) { 
+      abline(b, m) 
+      converged = TRUE
+      print(paste("Iterations Limit: intercept:", b, "slope:", m))
+      
+      rss <- sum( (y - yhat)^2 )
+      tss <- sum( ( y - mean(y) )^2 )
+      print( 1 - (rss / tss ))
+      
+      return()
+    }
+  }
+}
+  
+
+main <- function(){
+  dat <- readData()
+  #createScatter(myData = dat)
+  #gradientDesc(dat$X, dat$Y, 0.000025, 0.1, 1000000)
+  print("Done")
+  
+}
+
+main()
